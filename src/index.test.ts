@@ -1,8 +1,9 @@
 import fs from 'fs'
+import path from 'path'
 import yaml from 'js-yaml'
 import createType from './index'
 
-const fixture = fs.readFileSync('./fixtures/include.txt', 'utf8')
+const fixture = fs.readFileSync('fixtures/include.txt', 'utf8')
 
 test('includes content of existing file', () => {
   const type = createType()
@@ -25,7 +26,7 @@ includedFile: !!include "fixtures/include.txt"
 })
 
 test('includes content of existing file with custom path', () => {
-  const type = createType({ relativeTo: './fixtures' })
+  const type = createType({ relativeTo: 'fixtures/' })
   const schema = new yaml.Schema({
     include: [yaml.DEFAULT_SAFE_SCHEMA],
     explicit: [type],
