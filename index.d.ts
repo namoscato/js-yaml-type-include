@@ -4,4 +4,4 @@ type Options = {
   relativeTo?: string
 }
 
-export default function createType(options: Options): yaml.Type
+export default function createType(options?: Options): yaml.Type
