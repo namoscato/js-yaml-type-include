@@ -1,6 +1,6 @@
-const fs = require('fs')
-const yaml = require('js-yaml')
-const createType = require('./index')
+import fs from 'fs'
+import yaml from 'js-yaml'
+import createType from './index'
 
 const fixture = fs.readFileSync('./fixtures/include.txt', 'utf8')
 
