@@ -26,7 +26,7 @@ export const constructors = {
   createDataURI: createDataURI,
 }
 
-export function createType({
+export function createIncludeType({
   name = 'tag:yaml.org,2002:include',
   relativeTo = process.cwd(),
   extensions = [],
@@ -54,7 +54,7 @@ export function createType({
   // Make type extensible
   const includeType: IncludeType = Object.assign({}, type, {
     relativeTo: (path: string) => {
-      return createType({
+      return createIncludeType({
         name,
         relativeTo: dirname(path),
         extensions,

@@ -1,13 +1,12 @@
 import fs from 'fs'
 import yaml from 'js-yaml'
-import { createType, constructors } from './index'
+import { createIncludeType, constructors } from './index'
 
 const textFixture = fs.readFileSync('fixtures/include.txt', 'utf8')
-const yamlFixture = fs.readFileSync('fixtures/include.yml', 'utf8')
 
 describe('createType', () => {
   test('includes content of existing file', () => {
-    const type = createType()
+    const type = createIncludeType()
     const schema = new yaml.Schema({
       include: [yaml.DEFAULT_SAFE_SCHEMA],
       explicit: [type],
@@ -26,7 +25,7 @@ includedFile: !!include "fixtures/include.txt"
     expect(yaml.dump(content)).toMatchSnapshot('dump')
   })
   test('includes content of existing file with custom extensions', () => {
-    const type = createType({
+    const type = createIncludeType({
       extensions: [
         {
           pattern: /\.yml$/,
@@ -68,7 +67,7 @@ includedPNG: !!include "fixtures/include.png"
   })
 
   test('includes content of existing file with custom path', () => {
-    const type = createType({ relativeTo: 'fixtures/' })
+    const type = createIncludeType({ relativeTo: 'fixtures/' })
     const schema = new yaml.Schema({
       include: [yaml.DEFAULT_SAFE_SCHEMA],
       explicit: [type],
@@ -88,7 +87,7 @@ includedFile: !!include "include.txt"
   })
 
   test('throw error for non-existing file', () => {
-    const type = createType()
+    const type = createIncludeType()
     const schema = new yaml.Schema({
       include: [yaml.DEFAULT_SAFE_SCHEMA],
       explicit: [type],
