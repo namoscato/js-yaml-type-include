@@ -1,28 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`includes content of existing file with custom path: dump 1`] = `
+exports[`createType includes content of existing file with custom extension: dump 1`] = `
+"includedFile:
+  includedObject:
+    - true
+    - 'no'
+    - custom: content
+"
+`;
+
+exports[`createType includes content of existing file with custom extension: load 1`] = `
+Object {
+  "includedFile": Object {
+    "includedObject": Array [
+      true,
+      "no",
+      Object {
+        "custom": "content",
+      },
+    ],
+  },
+}
+`;
+
+exports[`createType includes content of existing file with custom path: dump 1`] = `
 "includedFile: Custom Include
 "
 `;
 
-exports[`includes content of existing file with custom path: load 1`] = `
+exports[`createType includes content of existing file with custom path: load 1`] = `
 Object {
   "includedFile": "Custom Include",
 }
 `;
 
-exports[`includes content of existing file: dump 1`] = `
+exports[`createType includes content of existing file: dump 1`] = `
 "includedFile: Custom Include
 "
 `;
 
-exports[`includes content of existing file: load 1`] = `
+exports[`createType includes content of existing file: load 1`] = `
 Object {
   "includedFile": "Custom Include",
 }
 `;
 
-exports[`throw error for non-existing file 1`] = `
+exports[`createType throw error for non-existing file 1`] = `
 "cannot resolve a node with !<tag:yaml.org,2002:include> explicit tag at line 2, column 51:
      ... clude \\"fixtures/nonExistant.txt\\"
                                          ^"

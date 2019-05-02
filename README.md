@@ -3,16 +3,19 @@
 Use it like this:
 
 ```js
-import createIncludeType from 'js-yaml-type-include'
+import { createType } from 'js-yaml-type-include'
 
-const type = createIncludeType({
+const type = createType({
   relativeTo: './path', // is optional and defaults to the current directory
 })
 const schema = new yaml.Schema({
   include: [yaml.DEFAULT_SAFE_SCHEMA],
   explicit: [type],
 })
-const parsed = yaml.load(`
+const parsed = yaml.load(
+  `
 includedFile: !!data "file.txt"
-`, { schema })
+`,
+  { schema }
+)
 ```
