@@ -1,10 +1,17 @@
 import { existsSync, readFileSync } from 'fs'
-import { resolve } from 'path'
+import { dirname, resolve } from 'path'
 import yaml from 'js-yaml'
+import { sync as createDataURI } from 'datauri'
+
+export interface IncludeType extends yaml.Type {
+  relativeTo: (path: string) => IncludeType
+}
+
+type Constructor = (path: string) => any
 
 type Extension = {
   pattern: RegExp
-  construct: (path: string) => any
+  construct: Constructor
 }
 type Extensions = Extension[]
 
@@ -14,12 +21,17 @@ export interface Options {
   extensions?: Extensions
 }
 
+export const constructors = {
+  readFile: (path: string) => readFileSync(path, 'utf8'),
+  createDataURI: createDataURI,
+}
+
 export function createType({
   name = 'tag:yaml.org,2002:include',
   relativeTo = process.cwd(),
   extensions = [],
-}: Options = {}) {
-  return new yaml.Type(name, {
+}: Options = {}): IncludeType {
+  const type = new yaml.Type(name, {
     kind: 'scalar',
     resolve: (path: string) => {
       const fullPath = resolve(relativeTo, path)
@@ -38,4 +50,17 @@ export function createType({
         : readFileSync(fullPath, 'utf8')
     },
   })
+
+  // Make type extensible
+  const includeType: IncludeType = Object.assign({}, type, {
+    relativeTo: (path: string) => {
+      return createType({
+        name,
+        relativeTo: dirname(path),
+        extensions,
+      })
+    },
+  })
+
+  return includeType
 }

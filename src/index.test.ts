@@ -1,6 +1,6 @@
 import fs from 'fs'
 import yaml from 'js-yaml'
-import { createType } from './index'
+import { createType, constructors } from './index'
 
 const textFixture = fs.readFileSync('fixtures/include.txt', 'utf8')
 const yamlFixture = fs.readFileSync('fixtures/include.yml', 'utf8')
@@ -25,15 +25,25 @@ includedFile: !!include "fixtures/include.txt"
     expect(content).toMatchSnapshot('load')
     expect(yaml.dump(content)).toMatchSnapshot('dump')
   })
-  test('includes content of existing file with custom extension', () => {
+  test('includes content of existing file with custom extensions', () => {
     const type = createType({
       extensions: [
         {
-          pattern: /(.yml)$/,
+          pattern: /\.yml$/,
           construct: path => {
-            const content = fs.readFileSync(path, 'utf8')
-            return yaml.load(content)
+            const innerSchema = new yaml.Schema({
+              include: [yaml.DEFAULT_SAFE_SCHEMA],
+              explicit: [type.relativeTo(path)],
+            })
+
+            return yaml.load(constructors.readFile(path), {
+              schema: innerSchema,
+            })
           },
+        },
+        {
+          pattern: /\.png$/,
+          construct: constructors.createDataURI,
         },
       ],
     })
@@ -43,14 +53,16 @@ includedFile: !!include "fixtures/include.txt"
     })
     const content = yaml.load(
       `
-includedFile: !!include "fixtures/include.yml"
+includedYAML: !!include "fixtures/include.yml"
+includedPNG: !!include "fixtures/include.png"
   `,
       { schema }
     )
 
     expect(content).not.toBeNull()
-    expect(content.includedFile).not.toBeNull()
-    expect(content.includedFile).toMatchObject(yaml.load(yamlFixture))
+    expect(content.includedYAML).not.toBeNull()
+    expect(content.includedYAML.deepInclude.deep).toEqual(true)
+    expect(content.includedPNG).not.toBeNull()
     expect(content).toMatchSnapshot('load')
     expect(yaml.dump(content)).toMatchSnapshot('dump')
   })

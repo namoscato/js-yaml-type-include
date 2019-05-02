@@ -2,3 +2,4 @@ includedObject:
   - true
   - no
   - custom: content
+deepInclude: !!include 'deepInclude.yml'

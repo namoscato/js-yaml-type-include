@@ -1,6 +1,6 @@
 {
   "name": "js-yaml-type-include",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Custom type for js-yaml to include other files",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -37,6 +37,7 @@
     "typescript": "^3"
   },
   "dependencies": {
+    "datauri": "^2.0.0",
     "js-yaml": "^3.13.1"
   },
   "config": {
