@@ -3,10 +3,6 @@ import { dirname, resolve } from 'path'
 import yaml from 'js-yaml'
 import { sync as createDataURI } from 'datauri'
 
-export interface IncludeType extends yaml.Type {
-  relativeTo: (path: string) => IncludeType
-}
-
 type Constructor = (path: string) => any
 
 type Extension = {
@@ -19,6 +15,7 @@ export interface Options {
   name?: string
   relativeTo?: string
   extensions?: Extensions
+  createNestedSchema?: ((type: yaml.Type) => yaml.Schema) | null
 }
 
 export const constructors = {
@@ -30,7 +27,27 @@ export function createIncludeType({
   name = 'tag:yaml.org,2002:include',
   relativeTo = process.cwd(),
   extensions = [],
-}: Options = {}): IncludeType {
+  createNestedSchema = null,
+}: Options = {}) {
+  // Allow including other YAML files if we can create a nested schema
+  if (createNestedSchema) {
+    extensions.push({
+      pattern: /\.yml$/,
+      construct: path => {
+        const nestedType = createIncludeType({
+          name,
+          relativeTo: dirname(path),
+          extensions,
+        })
+        const nestedSchema = createNestedSchema(nestedType)
+
+        return yaml.load(constructors.readFile(path), {
+          schema: nestedSchema,
+        })
+      },
+    })
+  }
+
   const type = new yaml.Type(name, {
     kind: 'scalar',
     resolve: (path: string) => {
@@ -51,16 +68,5 @@ export function createIncludeType({
     },
   })
 
-  // Make type extensible
-  const includeType: IncludeType = Object.assign({}, type, {
-    relativeTo: (path: string) => {
-      return createIncludeType({
-        name,
-        relativeTo: dirname(path),
-        extensions,
-      })
-    },
-  })
-
-  return includeType
+  return type
 }

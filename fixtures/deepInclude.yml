@@ -1,1 +1,2 @@
 deep: true
+deepPNG: !!include 'include.png'

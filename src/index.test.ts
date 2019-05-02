@@ -28,23 +28,15 @@ includedFile: !!include "fixtures/include.txt"
     const type = createIncludeType({
       extensions: [
         {
-          pattern: /\.yml$/,
-          construct: path => {
-            const innerSchema = new yaml.Schema({
-              include: [yaml.DEFAULT_SAFE_SCHEMA],
-              explicit: [type.relativeTo(path)],
-            })
-
-            return yaml.load(constructors.readFile(path), {
-              schema: innerSchema,
-            })
-          },
-        },
-        {
           pattern: /\.png$/,
           construct: constructors.createDataURI,
         },
       ],
+      createNestedSchema: nestedType =>
+        new yaml.Schema({
+          include: [yaml.DEFAULT_SAFE_SCHEMA],
+          explicit: [nestedType],
+        }),
     })
     const schema = new yaml.Schema({
       include: [yaml.DEFAULT_SAFE_SCHEMA],

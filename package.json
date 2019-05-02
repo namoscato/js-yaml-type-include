@@ -1,6 +1,6 @@
 {
   "name": "js-yaml-type-include",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Custom type for js-yaml to include other files",
   "main": "build/index.js",
   "types": "build/index.d.ts",
