@@ -16,6 +16,7 @@ export interface Options {
   relativeTo?: string
   extensions?: Extensions
   createNestedSchema?: ((type: yaml.Type) => yaml.Schema) | null
+  ignoreMissingFiles?: boolean
 }
 
 export const constructors = {
@@ -28,6 +29,7 @@ export function createIncludeType({
   relativeTo = process.cwd(),
   extensions = [],
   createNestedSchema = null,
+  ignoreMissingFiles = false,
 }: Options = {}) {
   // Allow including other YAML files if we can create a nested schema
   if (createNestedSchema) {
@@ -52,10 +54,16 @@ export function createIncludeType({
     kind: 'scalar',
     resolve: (path: string) => {
       const fullPath = resolve(relativeTo, path)
-      return existsSync(fullPath)
+      return ignoreMissingFiles ? true : existsSync(fullPath)
     },
     construct: (path: string) => {
       const fullPath = resolve(relativeTo, path)
+      const fileExists = existsSync(fullPath)
+
+      // Return null for missing files
+      if (!fileExists && ignoreMissingFiles) {
+        return null
+      }
 
       // Find extension
       const extension = extensions.find(extension => {
