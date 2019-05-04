@@ -20,7 +20,7 @@ export interface Options {
 
 export const constructors = {
   readFile: (path: string) => readFileSync(path, 'utf8'),
-  createDataURI: createDataURI,
+  createDataURI: (path: string): string => createDataURI(path),
 }
 
 export function createIncludeType({
