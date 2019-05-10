@@ -34,7 +34,7 @@ export function createIncludeType({
   // Allow including other YAML files if we can create a nested schema
   if (createNestedSchema) {
     extensions.push({
-      pattern: /\.yml$/,
+      pattern: /\.ya?ml$/,
       construct: path => {
         const nestedType = createIncludeType({
           name,
