@@ -37,8 +37,7 @@
     "typescript": "^3"
   },
   "dependencies": {
-    "datauri": "^2.0.0",
-    "js-yaml": "^3.13.1"
+    "datauri": "^2.0.0"
   },
   "config": {
     "commitizen": {
@@ -56,5 +55,8 @@
       "post-rewrite": "yarn install",
       "pre-commit": "pretty-quick --staged --verbose"
     }
+  },
+  "peerDependencies": {
+    "js-yaml": ">=3 <=4"
   }
 }
